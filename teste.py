@@ -51,19 +51,15 @@ def rgb2ycbcr(img):
     y, _, _ = cv2.split(img2)
     return y
 
-def auto_canny(image, sigma=0.33):
-    lowThreshold = 80
-    ratio = 3
-    kernel_size = 3
+def detecting_edges(image):
     new_img = rgb2ycbcr(image)
-	# compute the median of the single channel pixel intensities
-    #ycbcr = cv2.cvtColor(image, cv2.COLOR_BGR2YCR_CB)
-    img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	# apply automatic Canny edge detection using the computed median
-    edged = cv2.Canny(img, 313, 14)
- 
-	# return the edged image
-    return edged
+    img = cv2.blur(new_img, (7,7))
+    edged = cv2.Canny(img, 194, 26)
+    small = cv2.resize(edged, (0,0), fx=0.5, fy=0.5) 
+    kernel = np.ones((3,3),np.uint8)
+    closing = cv2.morphologyEx(small, cv2.MORPH_CLOSE, kernel)
+
+    return closing
 
 def nothing(x):
     pass
